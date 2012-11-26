@@ -8,7 +8,7 @@
   "dependencies": {
     "express": "3.0.3",
     "ejs": "*",
-    "socket.io": "*",
+    "socket.io": "latest",
     "redis": "",
     "hiredis": ""
   },
