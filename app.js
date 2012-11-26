@@ -73,6 +73,7 @@ if (process.env.REDISTOGO_URL) {
 }
 
 io.sockets.on('connection', function (client) {
+    userData.del('usersOnline');
     userData.sadd('usersOnline', client.id);
 
     userData.smembers('usersOnline', function(err, data){
