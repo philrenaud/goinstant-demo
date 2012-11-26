@@ -65,7 +65,7 @@ function initializeMap (){
 
 
 function socketHandlers(){
-    socket = new io.connect('http://localhost');
+    socket = new io.connect('window.location.hostname');
     socket.on('connect', function() {
         console.log("Connected");
         navigator.geolocation.getCurrentPosition(gotGeo, notGeo);
