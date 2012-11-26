@@ -1,0 +1,19 @@
+{
+  "name": "Phil-Renaud-GoInstant-Demo-App",
+  "version": "0.0.1-1",
+  "private": true,
+  "scripts": {
+    "start": "node app"
+  },
+  "dependencies": {
+    "express": "3.0.3",
+    "ejs": "*",
+    "socket.io": "0.9.6",
+    "redis": "",
+    "hiredis": ""
+  },
+  "subdomain": "philrenaud.goinstant-sandbox",
+  "engines": {
+    "node": "0.8.x"
+  }
+}
