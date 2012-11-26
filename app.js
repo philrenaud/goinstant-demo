@@ -64,25 +64,15 @@ server.listen(port);
 //If you are using RedisToGo with Heroku
 if (process.env.REDISTOGO_URL) {
     var rtg   = require("url").parse(process.env.REDISTOGO_URL);
-    var redis1 = require("redis").createClient(rtg.port, rtg.hostname);
-    var redis2 = require("redis").createClient(rtg.port, rtg.hostname);
-    var redis3 = require("redis").createClient(rtg.port, rtg.hostname);
     var userData = require("redis").createClient(rtg.port, rtg.hostname);
 
-    redis1.auth(rtg.auth.split(":")[1]);
-    redis2.auth(rtg.auth.split(":")[1]);
-    redis3.auth(rtg.auth.split(":")[1]);
     userData.auth(rtg.auth.split(":")[1]);
 } else {
     //If you are using your own Redis server
-    var redis1 = require("redis").createClient();
-    var redis2 = require("redis").createClient();
-    var redis3 = require("redis").createClient();
     var userData = require("redis").createClient();
 }
 
 io.sockets.on('connection', function (client) {
-
     userData.sadd('usersOnline', client.id);
 
     userData.smembers('usersOnline', function(err, data){
@@ -91,13 +81,16 @@ io.sockets.on('connection', function (client) {
     }); //userData.smembers
     
     client.on('message', function(msg) {
-        if(msg.type == "chat"){
-            //redis2.publish("phil-demo",msg.message);  
-        } //if msg.type == chat
-        else if(msg.type == "setUsername"){
-            //redis2.publish("phil-demo", "A New User is connected : " + msg.user);
-        } //if msg.type == setUsername
-        else if (msg.type == "geolocation") {
+        if (msg.type == "geolocation") {
+
+        userData.sadd('recentUsers', [[msg.latitude, msg.longitude]]);
+        userData.smembers('recentUsers', function(err, data){
+          var dialog = {type:'recentUsers', list: data};
+          io.sockets.json.send(dialog);
+          //console.log('recentUsers: ' + data.length);
+        }); //smembers
+
+
             userData.sadd('userLocation', 'lat: ' + msg.latitude + ', lng: ' + msg.longitude + ',');
             var dialog = {type:'geolocation', latitude: msg.latitude, longitude: msg.longitude};
             io.sockets.json.send(dialog)
@@ -105,6 +98,6 @@ io.sockets.on('connection', function (client) {
     }); //on message
 
     client.on('disconnect', function() {
-        userData.srem('usersOnline', client.id);
+        userData.spop('usersOnline');
     }); //on disconnect
 }); //on connection

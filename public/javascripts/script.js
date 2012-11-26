@@ -14,7 +14,7 @@ $(document).ready(function(){
 
 
 /*==( ^ Call universal functions. Not dependent on tablet/desktop, etc.
-Most of these are in .length-called if statements. This helps us avoid
+Generally these are in .length-called if statements. This helps us avoid
 loading unecessary javascript only to find that there are no suitable
 DOM elements to run on.
 )======================================================*/
@@ -25,31 +25,11 @@ function universalController(){
     socketHandlers();
     eventHandler();
 
-
-
-
-            // var username = "anonymous";
-            
-            // $('input[name=setUsername]').click(function(){
-            //     if($('input[name=usernameTxt]').val() != ""){
-            //         username = $('input[name=usernameTxt]').val();
-            //         var msg = {type:'setUsername',user:username};
-            //         socket.json.send(msg);
-            //     }
-            //     $('#username').slideUp("slow",function(){
-            //         $('#sendChat').slideDown("slow");
-            //     });
-            // }); //click setUsername
-
-            // $("input[name=sendBtn]").click(function(){
-            //     var msg = {type:'chat',message:username + " : " +  $("input[name=chatTxt]").val()}
-            //     socket.json.send(msg);
-            //     $("input[name=chatTxt]").val("");
-            // }); //click sendBtn
-
 }; //universalController
 
 
+/*==( ^ Load Google Map using gmaps.js syntax
+)======================================================*/
 
 
 function initializeMap (){
@@ -63,44 +43,61 @@ function initializeMap (){
 }; //initializeMap
 
 
+/*==( ^ Handle socket connections and messages
+)======================================================*/
 
 function socketHandlers(){
     var here = "there";
     socket = new io.connect(window.location.hostname);
     socket.on('connect', function() {
-        console.log("Connected");
+        //console.log("Connected");
         navigator.geolocation.getCurrentPosition(gotGeo, notGeo);
     }); //on connect
 
     socket.on('message', function(dialog){
-        console.log(dialog);
-        console.log(dialog.type);
         if (dialog.type == 'usersOnline') {
             $('.users-online').html('Currently there are ' + dialog.message + ' users online.');
         }; //if dialog.type
-        if (dialog.type == 'geolocation') {
+        // if (dialog.type == 'geolocation') {
+        //     map.addMarker({
+        //         lat: dialog.latitude,
+        //         lng: dialog.longitude,
+        //         title: "New user is here!!!",
+        //         infoWindow: {
+        //             content: "New User is here and stuff"
+        //         },
+        //         click: function(e){
+        //         },
+        //         mouseover: function(e){
+        //         },
+        //         mouseout: function(e){
+        //         }
+        //     }); //addMarker
+        //     $('#container .inner').append('<div class="current-user">User at Lat: ' + dialog.latitude + ' and Long: ' + dialog.longitude + '</div>');
+        // }; //if geolocation
 
+        if (dialog.type == 'recentUsers'){
+            console.log(dialog.list);
+            console.log(dialog.list.length);
+            $.each(dialog.list, function(i){
+                //console.log(dialog.list[i].split(','));
             map.addMarker({
-                lat: dialog.latitude,
-                lng: dialog.longitude,
-                title: "New user is here!!!",
+                lat: dialog.list[i].split(',')[0],
+                lng: dialog.list[i].split(',')[1],
+                title: "User at " + dialog.list[i],
                 infoWindow: {
-                    content: "New User is here and stuff"
+                    content: "User at " + dialog.list[i]
                 },
                 click: function(e){
-                    console.log('hi! click happened');
                 },
                 mouseover: function(e){
-                    console.log('hi! mouseover happened');
                 },
                 mouseout: function(e){
-                    console.log('hi! mouseout happened');
                 }
             }); //addMarker
-            $('#container .inner').append('<div class="current-user">User at Lat: ' + dialog.latitude + ' and Long: ' + dialog.longitude + '</div>');
-
-
-        }; //if geolocation
+            $('#container .inner').append('<div class="current-user">User at ' + dialog.list[i] + '</div>');
+            })
+        }; //if recentUsers
     }); //on message
 
     socket.on('disconnect', function() {
@@ -111,15 +108,13 @@ function socketHandlers(){
 
 
 function eventHandler(){
-    $('.look-for').on('blur', function(){
-        console.log($('.look-for').val());
-    }); //blur look-for
-
     $('#container .inner').append('<p class="users-online"></p>');
 }; //eventHandler
 
 
 
+/*==( ^ Feed geolocation data if available, and add to map in gmaps
+)======================================================*/
 
 function gotGeo(position){
     console.log(position.coords.latitude +' by ' +  position.coords.longitude)
@@ -131,7 +126,6 @@ function gotGeo(position){
 function notGeo(){
     console.log('no dice');
 };//notGeo
-
 
 
 function addUserLocation(positionDataLat, positionDataLongi){
