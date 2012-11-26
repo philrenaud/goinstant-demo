@@ -20,7 +20,7 @@ var io = require('socket.io').listen(server);
 
 
 app.configure(function(){
-  app.set('port', process.env.PORT || 5000);
+  app.set('port', process.env.PORT || 36060);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
   app.use(express.favicon());
@@ -49,7 +49,7 @@ app.get('/', function (req, res) {
 
 app.get('/', routes.index);
 app.get('/users', user.list);
-server.listen(5000);
+server.listen(36060);
 
 
 
