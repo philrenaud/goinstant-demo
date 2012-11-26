@@ -65,6 +65,7 @@ function initializeMap (){
 
 
 function socketHandlers(){
+    var here = "there";
     socket = new io.connect(window.location.hostname);
     socket.on('connect', function() {
         console.log("Connected");
