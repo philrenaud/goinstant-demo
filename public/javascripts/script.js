@@ -1,6 +1,6 @@
 /*=====================
-prenaud@riester.com
-April 2012
+phil@riotindustries.com
+Nov. 2012
 =====================*/
 
 $(document).ready(function(){
@@ -79,6 +79,7 @@ function socketHandlers(){
         if (dialog.type == 'recentUsers'){
             console.log(dialog.list);
             console.log(dialog.list.length);
+            $('#container .inner .recent').children().remove();
             $.each(dialog.list, function(i){
                 //console.log(dialog.list[i].split(','));
             map.addMarker({
@@ -95,7 +96,7 @@ function socketHandlers(){
                 mouseout: function(e){
                 }
             }); //addMarker
-            $('#container .inner').append('<div class="current-user">User at ' + dialog.list[i] + '</div>');
+            $('#container .inner .recent').append('<div class="current-user">User at ' + dialog.list[i] + '</div>');
             })
         }; //if recentUsers
     }); //on message
@@ -108,7 +109,7 @@ function socketHandlers(){
 
 
 function eventHandler(){
-    $('#container .inner').append('<p class="users-online"></p>');
+    $('#container h1').after('<p class="users-online"></p>');
 }; //eventHandler
 
 
