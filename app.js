@@ -67,10 +67,12 @@ if (process.env.REDISTOGO_URL) {
     var redis1 = require("redis").createClient(rtg.port, rtg.hostname);
     var redis2 = require("redis").createClient(rtg.port, rtg.hostname);
     var redis3 = require("redis").createClient(rtg.port, rtg.hostname);
+    var userData = require("redis").createClient(rtg.port, rtg.hostname);
 
     redis1.auth(rtg.auth.split(":")[1]);
     redis2.auth(rtg.auth.split(":")[1]);
     redis3.auth(rtg.auth.split(":")[1]);
+    userData = require("redis").createClient(rtg.port, rtg.hostname);
 } else {
     //If you are using your own Redis server
     var redis1 = require("redis").createClient();
